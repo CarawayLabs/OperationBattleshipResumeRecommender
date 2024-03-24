@@ -15,7 +15,10 @@ class Handler(http.server.SimpleHTTPRequestHandler):
         self.wfile.write(msg.encode())
         
         openAiCaller = OpenAICaller()
-        msg2 = openAiCaller.get_completion("Write a short poem about Applications on Digial Ocean")
+        message =[ {"role": "system", "content": "You love writing poems."},
+                  {"role": "user", "content": "Write a short poem about Applications on Digial Ocean"}
+                  ]
+        msg2 = openAiCaller.get_completion(message)
         self.wfile.write(msg2.encode())
 
 
