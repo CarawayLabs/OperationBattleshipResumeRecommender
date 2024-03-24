@@ -1,7 +1,7 @@
 import os
 import http.server
 import socketserver
-from operation_battleship_common_utilities import OpenAICaller
+from operation_battleship_common_utilities.OpenAICaller import OpenAICaller
 
 
 from http import HTTPStatus
