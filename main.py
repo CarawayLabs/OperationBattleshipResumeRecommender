@@ -3,11 +3,6 @@ from typing import Union
 import uvicorn
 from operation_battleship_common_utilities.OpenAICaller import OpenAICaller
 
-
-from http import HTTPStatus
-
-
-
 app = FastAPI()
 
 def processResume(resume: UploadFile, email_address: str):
