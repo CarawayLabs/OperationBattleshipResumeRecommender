@@ -3,6 +3,6 @@ pdfminer.six
 python-dotenv
 OperationBattleshipCommonUtilities
 fastapi
-uvicorn
+uvicorn[standard]
 python-multipart
 requests
