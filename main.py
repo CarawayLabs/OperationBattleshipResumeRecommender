@@ -1,23 +1,21 @@
-from fastapi import FastAPI, File, UploadFile, Form, BackgroundTasks
-from typing import Union
-import uvicorn
-from operation_battleship_common_utilities.OpenAICaller import OpenAICaller
+from fastapi import FastAPI, File, UploadFile, BackgroundTasks, HTTPException
+from pydantic import BaseModel
+import shutil
 
 app = FastAPI()
 
-def processResume(resume: UploadFile, email_address: str):
-    # Placeholder for the complex processing logic
-    # You would replace this with your actual processing code
-    print(f"Processing resume for {email_address}")
+class JobRecommendationRequest(BaseModel):
+    email_address: str
 
-@app.post("/jobrecommendation")
-async def job_recommendation(
-    background_tasks: BackgroundTasks,
-    email_address: str = Form(...),
-    resume: UploadFile = File(...)
-):
-    background_tasks.add_task(processResume, resume, email_address)
-    return {"message": "Received. The processing of the resume has started."}
+async def process_resume(resume: UploadFile, email_address: str):
+    # Placeholder for your complex processing logic
+    # Save the file to a temporary location first
+    with open(resume.filename, "wb") as buffer:
+        shutil.copyfileobj(resume.file, buffer)
+    print(f"Processing resume {resume.filename} for {email_address}")
+    # Add your processing code here
 
-if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+@app.post("/jobrecommendation/")
+async def job_recommendation(request: JobRecommendationRequest, background_tasks: BackgroundTasks, resume: UploadFile = File(...)):
+    background_tasks.add_task(process_resume, resume, request.email_address)
+    return {"message": "Received", "email": request.email_address}
