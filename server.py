@@ -1,28 +1,28 @@
-import os
-import http.server
-import socketserver
+from fastapi import FastAPI, File, UploadFile, Form, BackgroundTasks
+from typing import Union
+import uvicorn
 from operation_battleship_common_utilities.OpenAICaller import OpenAICaller
 
 
 from http import HTTPStatus
 
 
-class Handler(http.server.SimpleHTTPRequestHandler):
-    def do_GET(self):
-        self.send_response(HTTPStatus.OK)
-        self.end_headers()
-        msg = 'Hello! you requested %s' % (self.path)
-        self.wfile.write(msg.encode())
-        
-        openAiCaller = OpenAICaller()
-        message =[ {"role": "system", "content": "You love writing poems."},
-                  {"role": "user", "content": "Write a short poem about Applications on Digial Ocean"}
-                  ]
-        msg2 = openAiCaller.get_completion(message)
-        self.wfile.write(msg2.encode())
 
+app = FastAPI()
 
-port = int(os.getenv('PORT', 80))
-print('Listening on port %s' % (port))
-httpd = socketserver.TCPServer(('', port), Handler)
-httpd.serve_forever()
+def processResume(resume: UploadFile, email_address: str):
+    # Placeholder for the complex processing logic
+    # You would replace this with your actual processing code
+    print(f"Processing resume for {email_address}")
+
+@app.post("/jobrecommendation")
+async def job_recommendation(
+    background_tasks: BackgroundTasks,
+    email_address: str = Form(...),
+    resume: UploadFile = File(...)
+):
+    background_tasks.add_task(processResume, resume, email_address)
+    return {"message": "Received. The processing of the resume has started."}
+
+if __name__ == "__main__":
+    uvicorn.run(app, host="0.0.0.0", port=8000)

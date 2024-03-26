@@ -1,4 +1,5 @@
 pandas
 pdfminer.six
 python-dotenv
+fastapi[all] python-multipart
 OperationBattleshipCommonUtilities
