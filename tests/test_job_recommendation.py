@@ -2,7 +2,7 @@ import requests
 import ssl
 
 def test_job_recommendation(email_address: str, resume_filepath: str):
-    url = 'https://operation-battleship-resume-7ek53.ondigitalocean.app:8080/jobrecommendation'  # Adjust the URL if your API is hosted elsewhere
+    url = 'https://operation-battleship-resume-7ek53.ondigitalocean.app/jobrecommendation'  # Adjust the URL if your API is hosted elsewhere
     files = {'resume': (resume_filepath, open(resume_filepath, 'rb'), 'application/pdf')}
     data = {'email_address': email_address}
 
