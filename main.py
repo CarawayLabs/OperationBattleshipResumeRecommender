@@ -19,3 +19,8 @@ async def process_resume(resume: UploadFile, email_address: str):
 async def job_recommendation(request: JobRecommendationRequest, background_tasks: BackgroundTasks, resume: UploadFile = File(...)):
     background_tasks.add_task(process_resume, resume, request.email_address)
     return {"message": "Received", "email": request.email_address}
+
+
+@app.get("/")
+async def root():
+    return {"message": "Hello World"}
