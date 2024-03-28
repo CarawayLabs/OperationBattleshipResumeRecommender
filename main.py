@@ -1,35 +1,37 @@
-import logging
-from fastapi import FastAPI, File, UploadFile, BackgroundTasks, HTTPException
+from fastapi import FastAPI, HTTPException, BackgroundTasks
 from pydantic import BaseModel
-import shutil
-
-# Configure logging
-logging.basicConfig(level=logging.INFO, format='%(asctime)s %(levelname)s:%(message)s')
+import logging
 
 app = FastAPI()
 
-class JobRecommendationRequest(BaseModel):
+# Define the request model
+class RecommendationRequest(BaseModel):
     email_address: str
+    resume_url: str
 
-async def process_resume(resume: UploadFile, email_address: str):
-    try:
-        # Save the file to a temporary location first
-        with open(resume.filename, "wb") as buffer:
-            shutil.copyfileobj(resume.file, buffer)
-        logging.info(f"Processing resume {resume.filename} for {email_address}")
-        # Add your processing code here
-    except Exception as e:
-        logging.error(f"Error processing resume {resume.filename} for {email_address}: {e}")
-        raise HTTPException(status_code=500, detail=str(e))
+def jobRecommendation(email_address: str, resume_url: str):
+    """
+    Placeholder function to simulate processing the resume and sending job recommendations.
+    Implement your actual processing logic here.
+    """
+    print(f"Processing resume from {resume_url} for {email_address}")
+    # Simulate a time-consuming task
+    # You can replace this with actual logic to process the resume and send recommendations
+    # time.sleep() should not be used in asynchronous functions, it's just for demonstration here
+    import time
+    time.sleep(5)
+    print(f"Finished processing for {email_address}")
 
-@app.post("/jobrecommendation/")
-async def job_recommendation(request: JobRecommendationRequest, background_tasks: BackgroundTasks, resume: UploadFile = File(...)):
-    try:
-        background_tasks.add_task(process_resume, resume, request.email_address)
-        return {"message": "Received", "email": request.email_address}
-    except Exception as e:
-        logging.error(f"Error in job_recommendation for {request.email_address}: {e}")
-        raise HTTPException(status_code=500, detail=str(e))
+@app.post("/recommendation")
+async def recommendation_endpoint(request: RecommendationRequest, background_tasks: BackgroundTasks):
+    """
+    Endpoint to receive email address and resume URL, and start a background job for processing.
+    """
+    # Kick off the background task without waiting for it to complete
+    background_tasks.add_task(jobRecommendation, request.email_address, request.resume_url)
+    
+    # Return a response immediately to the client
+    return {"message": "Recommendation process started successfully"}
 
 @app.get("/")
 async def root():
