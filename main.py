@@ -4,6 +4,9 @@ import logging
 import requests
 from io import BytesIO
 from pdfminer.high_level import extract_text
+from ResumeProcessor.JobRecomendation import main as job_recommendation_main
+
+number_of_jobs = 5
 
 app = FastAPI()
 
@@ -17,6 +20,7 @@ def jobRecommendation(email_address: str, resume_url: str):
     Placeholder function to simulate processing the resume and sending job recommendations.
     Implement your actual processing logic here.
     """
+
     print(f"Processing resume from {resume_url} for {email_address}")
     # Simulate a time-consuming task
     # You can replace this with actual logic to process the resume and send recommendations
@@ -35,14 +39,16 @@ def jobRecommendation(email_address: str, resume_url: str):
         pdf_file = BytesIO(response.content)
 
         # Extract text from the PDF file
-        text = extract_text(pdf_file)
+        resume_as_string = extract_text(pdf_file)
 
         # Print the number of characters in the resume
-        print(f"Number of characters in the resume: {len(text)}")
+        print(f"Number of characters in the resume: {len(resume_as_string)}")
 
         # Print the first 50 characters of the resume
-        first_50_chars = text[:50]
+        first_50_chars = resume_as_string[:50]
         print(f"First 50 characters of the resume: {first_50_chars}")
+
+        csvOfJobs = job_recommendation_main(resume_as_string, number_of_jobs)
 
     except requests.RequestException as e:
         print(f"Error downloading the PDF: {e}")
