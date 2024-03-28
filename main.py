@@ -1,6 +1,9 @@
 from fastapi import FastAPI, HTTPException, BackgroundTasks
 from pydantic import BaseModel
 import logging
+import requests
+from io import BytesIO
+from pdfminer.high_level import extract_text
 
 app = FastAPI()
 
@@ -21,6 +24,30 @@ def jobRecommendation(email_address: str, resume_url: str):
     import time
     time.sleep(5)
     print(f"Finished processing for {email_address}")
+
+
+    try:
+        # Download the PDF file
+        response = requests.get(resume_url)
+        response.raise_for_status()  # Raise an HTTPError for bad responses
+
+        # Convert the downloaded content into a BytesIO object for pdfminer to read
+        pdf_file = BytesIO(response.content)
+
+        # Extract text from the PDF file
+        text = extract_text(pdf_file)
+
+        # Print the number of characters in the resume
+        print(f"Number of characters in the resume: {len(text)}")
+
+        # Print the first 50 characters of the resume
+        first_50_chars = text[:50]
+        print(f"First 50 characters of the resume: {first_50_chars}")
+
+    except requests.RequestException as e:
+        print(f"Error downloading the PDF: {e}")
+    except Exception as e:
+        print(f"Error processing the PDF: {e}")
 
 @app.post("/recommendation")
 async def recommendation_endpoint(request: RecommendationRequest, background_tasks: BackgroundTasks):
