@@ -1,0 +1,8 @@
+# Ignore environment files
+.env
+
+# Ignore files that begin with 'scratch'
+scratch.*
+
+# Ignore log files
+*.log
