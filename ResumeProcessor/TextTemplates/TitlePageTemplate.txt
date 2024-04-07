@@ -1,0 +1,11 @@
+# {candidateName} 
+## {job_title} 
+## {company_name} 
+
+## {currentDate} 
+
+This job report includes information to help you prepare for your potential interview and understand ways to potentially optimize your resume. The report is broken into these sections: 
+- Job Fit Score: A job fit score is a quantitative assessment used to evaluate how well a candidate's background, skills, and experiences align with the requirements of a specific job role. It typically combines various factors, including qualifications, cultural fit, job responsibilities, career goals, and soft skills, to generate an overall score or rating. This score helps employers and candidates gauge the suitability of a match, guiding decisions in the hiring process and identifying areas for potential growth or development.
+- Interview Preparation Report: An Interview Preparation Report is a comprehensive analysis designed to help candidates understand how their skills, experience, and qualifications align with a specific job role they're applying for. It includes a detailed review of the job description and the candidate's resume, highlighting areas of strength and opportunities for improvement. The report also provides targeted interview questions to prepare for, questions to ask during the interview, and advice on how to effectively showcase expertise and fit for the role, including suggestions for incorporating relevant keywords into the resume to better match the job requirements.
+- Resume Keyword Analysis Report: A Resume Keyword Analysis Report is a document that compares the keywords found in a job posting with those present in a candidate's resume, identifying areas of alignment and gaps. It highlights the specific skills, experiences, and qualifications that employers are looking for, based on the job description, and assesses how well the candidate's resume matches these criteria. The report offers advice on how to optimize the resume by incorporating missing keywords and showcasing relevant accomplishments, thereby improving the candidate's visibility and chances of being selected for an interview.
+- Job Candidate Skills Report: This report communicates how well your skills match with what the employer is looking for in the job posting.
