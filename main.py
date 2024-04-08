@@ -19,9 +19,8 @@ from ResumeProcessor.RecommendedJobsEmailer import main as recomended_jobs_repor
 numberOfJobsForRecomendation = 5
 numberOfJobsForReportGeneration = 5
 
-logging.basicConfig(level=logging.INFO,
-                    format='%(levelname)s:%(name)s:%(funcName)s: %(message)s')
-logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
+
 
 app = FastAPI()
 
@@ -41,10 +40,15 @@ async def jobRecommendation(email_address: str, resume_url: str):
 
     try:
 
+        logging.debug(f"Begin Job Recomendation for email: {email_address}.")
+        logging.debug(f"Resume url is located at: {resume_url}.")
+
         pdf_file = await download_pdf(resume_url)
         resume_as_string = extract_text(pdf_file)
 
         recommendedJobsDf = job_recommendation_main(resume_as_string, numberOfJobsForRecomendation)
+        logging.debug(f"Completed the job recomendation step: {resume_url}.")
+
 
         recomendedJobs = recommendedJobsDf["job_posting_id"].head(numberOfJobsForReportGeneration).tolist()
 
@@ -53,7 +57,8 @@ async def jobRecommendation(email_address: str, resume_url: str):
         #Persist Job Recomendation to DB
 
         #Email Job Recomendation
-        recomended_jobs_reporter_main(email_address, recommendedJobsDf, recomendedJobsAsJobIdList)
+        messageID = recomended_jobs_reporter_main(email_address, recommendedJobsDf, recomendedJobsAsJobIdList)
+        logging.debug(f"Finished email send: {messageID}.")
 
 
     except requests.RequestException as e:

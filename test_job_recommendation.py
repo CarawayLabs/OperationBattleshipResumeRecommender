@@ -8,8 +8,8 @@ from ResumeProcessor.RecommendedJobsEmailer import main as email_main
 
 def test_job_recommendation_rest_api(email_address: str, resume_url: str):
     # Need to execute this command to start the server: uvicorn main:app --reload
-    #url = 'https://operation-battleship-resume-7ek53.ondigitalocean.app/recommendation'  # Prod endpoint
-    url = 'http://127.0.0.1:8000/recommendation' # Local endpoint
+    url = 'https://operation-battleship-resume-7ek53.ondigitalocean.app/recommendation'  # Prod endpoint
+    #url = 'http://127.0.0.1:8000/recommendation' # Local endpoint
     payload = {
         "email_address": email_address,
         "resume_url": resume_url  # This should be the URL to the resume

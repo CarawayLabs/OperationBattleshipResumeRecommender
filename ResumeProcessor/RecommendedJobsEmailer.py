@@ -21,9 +21,7 @@ import base64
 
 load_dotenv('.env')
 
-logging.basicConfig(level=logging.DEBUG,
-                    format='%(levelname)s:%(name)s:%(funcName)s: %(message)s')
-logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 
 
@@ -101,8 +99,6 @@ def createEmailBody(listOfReportUrls, recommendedJobsDf):
 
     return emailBody
 
-
-
 def sendEmail(emailAddress, listOfReportUrls, recommendedJobsDf, emailMessage):
     
     
@@ -121,15 +117,17 @@ def sendEmail(emailAddress, listOfReportUrls, recommendedJobsDf, emailMessage):
     # Send the email
     try:
         sent_message = service.users().messages().send(userId='me', body=raw_message).execute()
-        print(f"Message Id: {sent_message['id']}")
+        logging.info(f"Finished Jobs Emailer Module. Message Id: {sent_message['id']}")
+        return sent_message['id']
     except Exception as e:
-        print(f"An error occurred: {e}")
+        logging.error(f"An error occurred: {e}.")
+        
 def main(emailAddress, recommendedJobsDf, listOfReportUrls):
 
     emailMessage = createEmailBody(listOfReportUrls, recommendedJobsDf)
-    sendEmail(emailAddress, listOfReportUrls, recommendedJobsDf, emailMessage)
+    messageId = sendEmail(emailAddress, listOfReportUrls, recommendedJobsDf, emailMessage)
 
-    return 
+    return messageId
 
 
 if __name__ == "__main__":

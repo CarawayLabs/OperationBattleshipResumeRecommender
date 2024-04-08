@@ -39,16 +39,12 @@ from operation_battleship_common_utilities.CompanyDao import CompanyDao
 
 load_dotenv('.env')
 
-logging.basicConfig(level=logging.DEBUG,
-                    format='%(levelname)s:%(name)s:%(funcName)s: %(message)s')
-logger = logging.getLogger(__name__)
-
-
+logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
 
 def main(candidateName, resumeAsString, job_posting_ids):
     urlsForPdfReports = []
 
-    logger.debug(f"Number of job posting IDs: {len(job_posting_ids)}")
+    logging.debug(f"Number of job posting IDs: {len(job_posting_ids)}")
 
     bucketName = "operationbattleship-resumes"
     
@@ -56,13 +52,19 @@ def main(candidateName, resumeAsString, job_posting_ids):
     resumeAsJson = json.loads(resumeAsJson)
     jobTitle = resumeAsJson["Title"]
 
+    logging.debug(f"Begin generating reports. Job Title = : {len(jobTitle)}")
     reportNumber = 1
     for job_posting_id in job_posting_ids:
+
+        logging.debug(f"Begin generating reports. Working on report number: {reportNumber}")
+        
 
         markdownString = createJobReports(candidateName, resumeAsString, job_posting_id, resumeAsJson)
         htmlFile = createReportFile(markdownString, candidateName, reportNumber, jobTitle)
         htmlFileUrl = upload_to_space(htmlFile, bucketName)
         urlsForPdfReports.append(htmlFileUrl)
+
+        logging.debug(f"Completed with processing report number: {reportNumber}")
 
         reportNumber = reportNumber + 1
 
@@ -261,9 +263,14 @@ def upload_to_space(file_name, bucket_name, object_name=None):
     :param object_name: S3 object name. If not specified then file_name is used
     :return: True if file was uploaded, else False
     """
+
+    logging.debug(f"Begin attempt to upload file named: {file_name}")
     # If S3 object_name was not specified, use file_name
     if object_name is None:
         object_name = file_name
+
+    logging.debug(f"DO_SPACES_KEY: {os.getenv('DO_SPACES_KEY')}")
+    logging.debug(f"DO_SPACES_SECRET: {os.getenv('DO_SPACES_SECRET')}")
 
     # Setup the session with DigitalOcean Spaces
     session = boto3.session.Session()
@@ -280,8 +287,14 @@ def upload_to_space(file_name, bucket_name, object_name=None):
         print(f"{file_name} has been uploaded to {bucket_name}/{object_name}.")
         return file_url
     except NoCredentialsError:
-        print("Credentials not available")
+        logging.error(f"Failed when trying to upload to space. Recieved: NoCredentialsError", NoCredentialsError)
+        logging.error("Credentials not available")
         return None
+    
+    except Exception as e:
+        logging.error("Some other error:", e)
+        return None
+
     
 def removeFilesLocally(urlsForPdfReports):
     for url in urlsForPdfReports:
@@ -301,7 +314,7 @@ def removeFilesLocally(urlsForPdfReports):
 if __name__ == "__main__":
 
     current_function_name = inspect.stack()[0][3]
-    logger.info(f"{__file__}, {current_function_name}: Manually invoked the Custom Report Generator")
+    logging.debug(f"Manually invoked: {current_function_name}")
 
     candidateName = "Matthew Caraway"
     resumeAsString ="My fake resume"
