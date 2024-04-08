@@ -142,6 +142,8 @@ def sendEmail(emailAddress, listOfReportUrls, recommendedJobsDf, emailMessage):
 def main(emailAddress, recommendedJobsDf, listOfReportUrls):
     emailMessage = createEmailBody(listOfReportUrls, recommendedJobsDf)
     messageId = sendEmail(emailAddress, listOfReportUrls, recommendedJobsDf, emailMessage)
+    logging.info(f"We sent the email. Here is the message id: {messageId}")
+    print(f"We sent the email. Here is the message id: {messageId}")
     return messageId
 
 if __name__ == "__main__":

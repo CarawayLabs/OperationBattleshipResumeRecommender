@@ -79,8 +79,3 @@ async def recommendation_endpoint(request: RecommendationRequest, background_tas
     
     # Return a response immediately to the client
     return {"message": "Recommendation process started successfully"}
-
-@app.get("/")
-async def root():
-    logging.info("Root endpoint called")
-    return {"message": "Hello World"}
