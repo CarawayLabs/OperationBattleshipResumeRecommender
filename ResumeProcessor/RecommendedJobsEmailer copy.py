@@ -1,58 +1,42 @@
 """
 Purpose:
-Once we've created a list of jobs to recommend and the reports for the top selected jobs,
-we need to email the reports back to our users.
+Once we've created a list of jobs to recomend and the reports for the top selected jobs, we need to email the reports back to our users. 
+
+
+
 """
 
 import logging
 import sys
 import os
 import pandas as pd
+from dotenv import load_dotenv
 import requests
 import tempfile
-from dotenv import load_dotenv
+
+
 from google.oauth2 import service_account
 from googleapiclient.discovery import build
 from email.mime.text import MIMEText
 import base64
+
 
 load_dotenv('.env')
 
 log_level = os.getenv('LOG_LEVEL', 'INFO')
 logging.basicConfig(level=log_level, format='%(asctime)s - %(levelname)s - %(message)s')
 
-# Function to download service account JSON from URL
-def download_service_account_json(url):
-    response = requests.get(url)
-    if response.status_code == 200:
-        # Create a temporary file to store service account JSON
-        fd, path = tempfile.mkstemp(suffix='.json')
-        with os.fdopen(fd, 'w') as tmp:
-            tmp.write(response.text)
-        return path
-    else:
-        raise Exception(f"Failed to download service account file: {response.status_code}")
 
-# Decide whether to use a local service account file or download it
-SERVICE_ACCOUNT_PATH = os.getenv('SERVICE_ACCOUNT_PATH', None)
-SERVICE_ACCOUNT_URL = os.getenv('SERVICE_ACCOUNT_URL', None)
-
-if SERVICE_ACCOUNT_PATH and os.path.exists(SERVICE_ACCOUNT_PATH):
-    SERVICE_ACCOUNT_FILE_PATH = SERVICE_ACCOUNT_PATH
-    logging.info("Using local service account file.")
-elif SERVICE_ACCOUNT_URL:
-    SERVICE_ACCOUNT_FILE_PATH = download_service_account_json(SERVICE_ACCOUNT_URL)
-    logging.info("Downloaded service account file from URL.")
-else:
-    raise EnvironmentError("Neither a local SERVICE_ACCOUNT_PATH nor a SERVICE_ACCOUNT_URL is properly configured.")
+SERVICE_ACCOUNT_FILE = os.getenv('SERVICE_ACCOUNT_PATH')
 
 
-# Email address of the user on whose behalf the email is sent
+
+# Email address of the user in whose behalf the email is sent
 USER_EMAIL = 'FindMyNextJob@CarawayLabs.com'
+
 
 # The scope for the OAuth2 request.
 SCOPES = ['https://www.googleapis.com/auth/gmail.send']
-
 
 def convertDataFrameToHtmlTable(recommendedJobsDf):
     # Create a new DataFrame with only the desired columns
@@ -120,37 +104,40 @@ def createEmailBody(listOfReportUrls, recommendedJobsDf):
     return emailBody
 
 def sendEmail(emailAddress, listOfReportUrls, recommendedJobsDf, emailMessage):
-    # Authenticate and construct service using the downloaded service account file
+    
+    
+    # Authenticate and construct service
     credentials = service_account.Credentials.from_service_account_file(
-        SERVICE_ACCOUNT_FILE_PATH, scopes=SCOPES)
+        SERVICE_ACCOUNT_FILE, scopes=SCOPES)
     delegated_credentials = credentials.with_subject(USER_EMAIL)
     service = build('gmail', 'v1', credentials=delegated_credentials)
     
     # Create the email
     message = MIMEText(emailMessage, 'html')
     message['to'] = emailAddress
-    message['subject'] = 'Your job recommendation report from Caraway Labs'
+    message['subject'] = 'Your job recomendation report from Caraway Labs'
     raw_message = {'raw': base64.urlsafe_b64encode(message.as_string().encode()).decode()}
     
     # Send the email
     try:
         sent_message = service.users().messages().send(userId='me', body=raw_message).execute()
         logging.info(f"Finished Jobs Emailer Module. Message Id: {sent_message['id']}")
+        return sent_message['id']
     except Exception as e:
         logging.error(f"An error occurred: {e}.")
-
+        
 def main(emailAddress, recommendedJobsDf, listOfReportUrls):
+
     emailMessage = createEmailBody(listOfReportUrls, recommendedJobsDf)
     messageId = sendEmail(emailAddress, listOfReportUrls, recommendedJobsDf, emailMessage)
+
     return messageId
 
+
 if __name__ == "__main__":
-    # Example use of main function
-    # You might need to adapt this based on how you intend to call this script
-    if len(sys.argv) > 1:
-        email_address = sys.argv[1]
-        # Assuming `recommendedJobsDf` and `listOfReportUrls` are obtained here
-        # main(email_address, recommendedJobsDf, listOfReportUrls)
-    else:
-        logging.error("Email address required as command-line argument.")
+    
+    args = {"name": sys.argv[1]} if len(sys.argv) > 1 else {}
+    
+
+
 

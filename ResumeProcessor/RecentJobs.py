@@ -4,13 +4,14 @@ This Python script is used to call the Job Posting Dao and return the top 10 mos
 """
 import logging
 import pandas as pd
+import os
 from dotenv import load_dotenv
 
 
+load_dotenv('.env')
 
-logging.basicConfig(level=logging.INFO,
-                    format='%(levelname)s:%(name)s:%(funcName)s: %(message)s')
-logger = logging.getLogger(__name__)
+log_level = os.getenv('LOG_LEVEL', 'INFO')
+logging.basicConfig(level=log_level, format='%(asctime)s - %(levelname)s - %(message)s')
 
 
 

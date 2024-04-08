@@ -8,7 +8,8 @@ from io import BytesIO
 from pdfminer.high_level import extract_text
 from ResumeProcessor.JobRecomendation import main as job_recommendation_main
 
-
+import os
+from dotenv import load_dotenv
 import requests
 import pandas as pd
 from pdfminer.high_level import extract_text
@@ -16,10 +17,12 @@ from pdfminer.high_level import extract_text
 from ResumeProcessor.CustomReportGenerator import main as custom_report_generator_main
 from ResumeProcessor.RecommendedJobsEmailer import main as recomended_jobs_reporter_main
 
-numberOfJobsForRecomendation = 5
+numberOfJobsForRecomendation = 50
 numberOfJobsForReportGeneration = 5
 
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+load_dotenv('.env')
+log_level = os.getenv('LOG_LEVEL', 'INFO')
+logging.basicConfig(level=log_level, format='%(asctime)s - %(levelname)s - %(message)s')
 
 
 app = FastAPI()

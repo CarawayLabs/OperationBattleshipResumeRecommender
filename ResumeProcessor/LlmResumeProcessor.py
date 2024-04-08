@@ -13,7 +13,8 @@ from operation_battleship_common_utilities.OpenAICaller import OpenAICaller
 
 load_dotenv('.env')
 
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+log_level = os.getenv('LOG_LEVEL', 'INFO')
+logging.basicConfig(level=log_level, format='%(asctime)s - %(levelname)s - %(message)s')
 
 class LlmResumeProcessor:
 
