@@ -4,8 +4,10 @@ from pdfminer.high_level import extract_text
 from io import BytesIO
 from ResumeProcessor.JobRecomendation import main as job_recommendation_main
 from ResumeProcessor.CustomReportGenerator import main as custom_report_generator_main
+from ResumeProcessor.RecommendedJobsEmailer import main as email_main
 
 def test_job_recommendation_rest_api(email_address: str, resume_url: str):
+    # Need to execute this command to start the server: uvicorn main:app --reload
     #url = 'https://operation-battleship-resume-7ek53.ondigitalocean.app/recommendation'  # Prod endpoint
     url = 'http://127.0.0.1:8000/recommendation' # Local endpoint
     payload = {
@@ -24,7 +26,7 @@ def test_job_recomendation_module(resume_url, numberOfJobs):
 
     csvOfJobs = job_recommendation_main(resume_as_string, numberOfJobs)
 
-    csvOfJobs.to_csv("recomendedJobs.csv")
+    csvOfJobs.to_csv("testInput/recomendedJobs.csv")
 
     return
 
@@ -47,19 +49,52 @@ def test_report_generation_module(resume_url):
 
     return listOfReportUrls
 
-def combineRecomendationAndReports(resume_url, numberOfJobsToRecomend, numberOfReportsToGenerate):
+def test_email_module():
+
+    emailAddress = "matthew@carawaylabs.com"
+    recommendedJobsDf = pd.read_csv("testInput/recomendedJobs.csv")
+    listOfReportUrls = ['https://operationbattleship-resumes.nyc3.digitaloceanspaces.com/MatthewCaraway_AIProductManager_JobReport1.html',
+                        'https://operationbattleship-resumes.nyc3.digitaloceanspaces.com/MatthewCaraway_AIProductManager_JobReport2.html', 
+                        'https://operationbattleship-resumes.nyc3.digitaloceanspaces.com/MatthewCaraway_AIProductManager_JobReport3.html', 
+                        'https://operationbattleship-resumes.nyc3.digitaloceanspaces.com/MatthewCaraway_AIProductManager_JobReport4.html', 
+                        'https://operationbattleship-resumes.nyc3.digitaloceanspaces.com/MatthewCaraway_AIProductManager_JobReport5.html', 
+                        'https://operationbattleship-resumes.nyc3.digitaloceanspaces.com/MatthewCaraway_AdjacentRolesReport.html'
+                        ]
+    
+
+    email_main(emailAddress, recommendedJobsDf, listOfReportUrls)
+
+    return
+
+def test_recomendation_and_report_modules(resume_url, numberOfJobsToRecomend, numberOfReportsToGenerate):
 
     resume_as_string = getResumeAsString(resume_url)
 
     csvOfJobs = job_recommendation_main(resume_as_string, numberOfJobsToRecomend)
 
-    csvOfJobs.to_csv("recomendedJobs.csv")
+    csvOfJobs.to_csv("testInput/recomendedJobs.csv")
 
     recomendedJobs = csvOfJobs["job_posting_id"].head(numberOfReportsToGenerate).tolist()
 
     listOfReportUrls = custom_report_generator_main("Matthew Caraway", resume_as_string, recomendedJobs)
 
     return listOfReportUrls
+
+def test_recomendation_reports_and_email_modules(resume_url, numberOfJobsToRecomend, emailAddress):
+
+    resume_as_string = getResumeAsString(resume_url)
+    
+    #Step 1 is to get the list of recomendations
+    recommendedJobsDf = job_recommendation_main(resume_as_string, numberOfJobsToRecomend)
+    
+    #Step 2 is to provide reports for the top jobs. 
+    recomendedJobsAsJobIdList = recommendedJobsDf["job_posting_id"].head(numberOfReportsToGenerate).tolist()
+    listOfReportUrls = custom_report_generator_main("Matthew Caraway", resume_as_string, recomendedJobsAsJobIdList)
+
+    #Step 3 is to send the email to the user. 
+    email_main(emailAddress, recommendedJobsDf, listOfReportUrls)
+
+    return
 
 def getResumeAsString(resume_url):
 
@@ -75,18 +110,23 @@ def getResumeAsString(resume_url):
     return resume_as_string
 
 if __name__ == "__main__":
-    email_address = "caraway602@gmail.com"
-    resume_url = "https://operationbattleship-resumes.nyc3.cdn.digitaloceanspaces.com/MatthewCarawayResume.pdf"  # Assuming this is the correct public URL to the resume
     
-    #test_job_recommendation_rest_api(email_address, resume_url)
+    #Key variables required for the recomendation system. 
+    emailAddress = "matthew@carawaylabs.com"
+    resume_url = "https://operationbattleship-resumes.nyc3.cdn.digitaloceanspaces.com/MatthewCarawayResume.pdf"
+    numberOfJobsToRecomend = 25
+    numberOfReportsToGenerate = 5
 
+    test_job_recommendation_rest_api(emailAddress, resume_url)
 
     #test_job_recomendation_module(resume_url, 5)
 
     #test_report_generation_module(resume_url)
 
-    numberOfJobsToRecomend = 25
-    numberOfReportsToGenerate = 5
-    combineRecomendationAndReports(resume_url, numberOfJobsToRecomend, numberOfReportsToGenerate)
+   # test_recomendation_and_report_modules(resume_url, numberOfJobsToRecomend, numberOfReportsToGenerate)
+
+    #test_email_module()
+
+    #test_recomendation_reports_and_email_modules(resume_url, numberOfJobsToRecomend, emailAddress)
 
     

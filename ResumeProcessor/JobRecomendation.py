@@ -80,6 +80,7 @@ def getJobsAndMetaData(namsSpaceForFullPosting, namsSpaceForJobTitles, namsSpace
         'overall_score',
         'average_rank',
         'company_name',
+        'linkedin_url',
         'job_title',
         'posting_url',
         'full_posting_description',

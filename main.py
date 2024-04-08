@@ -14,6 +14,7 @@ import pandas as pd
 from pdfminer.high_level import extract_text
 
 from ResumeProcessor.CustomReportGenerator import main as custom_report_generator_main
+from ResumeProcessor.RecommendedJobsEmailer import main as recomended_jobs_reporter_main
 
 numberOfJobsForRecomendation = 5
 numberOfJobsForReportGeneration = 5
@@ -43,26 +44,17 @@ async def jobRecommendation(email_address: str, resume_url: str):
         pdf_file = await download_pdf(resume_url)
         resume_as_string = extract_text(pdf_file)
 
-        print(f"Number of characters in the resume: {len(resume_as_string)}")
+        recommendedJobsDf = job_recommendation_main(resume_as_string, numberOfJobsForRecomendation)
 
-        # Print the first 50 characters of the resume
-        first_50_chars = resume_as_string[:50]
-        print(f"First 50 characters of the resume: {first_50_chars}")
+        recomendedJobs = recommendedJobsDf["job_posting_id"].head(numberOfJobsForReportGeneration).tolist()
 
-        csvOfJobs = job_recommendation_main(resume_as_string, numberOfJobsForRecomendation)
-
-        recomendedJobs = csvOfJobs["job_posting_id"].head(numberOfJobsForReportGeneration).tolist()
-
-        listOfReportUrls = custom_report_generator_main("Matthew Caraway", resume_as_string, recomendedJobs)
+        recomendedJobsAsJobIdList = custom_report_generator_main("Matthew Caraway", resume_as_string, recomendedJobs)
 
         #Persist Job Recomendation to DB
 
         #Email Job Recomendation
+        recomended_jobs_reporter_main(email_address, recommendedJobsDf, recomendedJobsAsJobIdList)
 
-
-
-
-        
 
     except requests.RequestException as e:
         print(f"Error downloading the PDF: {e}")

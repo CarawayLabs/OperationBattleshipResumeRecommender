@@ -6,3 +6,9 @@ scratch.*
 
 # Ignore log files
 *.log
+
+# Service account key
+service-account-file.json
+
+#Ignore any files we placed into our local folder for testing and iterations. 
+testInput/
