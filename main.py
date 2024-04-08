@@ -19,7 +19,7 @@ from ResumeProcessor.RecommendedJobsEmailer import main as recomended_jobs_repor
 numberOfJobsForRecomendation = 5
 numberOfJobsForReportGeneration = 5
 
-logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 
 app = FastAPI()
