@@ -114,12 +114,12 @@ if __name__ == "__main__":
     #Key variables required for the recomendation system. 
     emailAddress = "matthew@carawaylabs.com"
     resume_url = "https://operationbattleship-resumes.nyc3.cdn.digitaloceanspaces.com/MatthewCarawayResume.pdf"
-    numberOfJobsToRecomend = 25
+    numberOfJobsToRecomend = 100
     numberOfReportsToGenerate = 5
 
-    test_job_recommendation_rest_api(emailAddress, resume_url)
+    #test_job_recommendation_rest_api(emailAddress, resume_url)
 
-    #test_job_recomendation_module(resume_url, 5)
+    test_job_recomendation_module(resume_url, numberOfJobsToRecomend)
 
     #test_report_generation_module(resume_url)
 
