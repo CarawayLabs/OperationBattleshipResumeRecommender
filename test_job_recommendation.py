@@ -117,7 +117,7 @@ if __name__ == "__main__":
     numberOfJobsToRecomend = 100
     numberOfReportsToGenerate = 5
 
-    #test_job_recommendation_rest_api(emailAddress, resume_url)
+    test_job_recommendation_rest_api(emailAddress, resume_url)
 
     test_job_recomendation_module(resume_url, numberOfJobsToRecomend)
 

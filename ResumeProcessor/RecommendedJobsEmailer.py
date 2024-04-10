@@ -104,7 +104,7 @@ def load_email_template(filename):
 
 def createEmailBody(listOfReportUrls, recommendedJobsDf):
     # Path to your template
-    template_path = 'ResumeProcessor/HtmlTemplates/email_template.html'
+    template_path = 'ResumeProcessor/HtmlTemplates/email_template2.html'
     
     # Load the template
     htmlTemplate = load_email_template(template_path)
