@@ -17,7 +17,7 @@ from pdfminer.high_level import extract_text
 from ResumeProcessor.CustomReportGenerator import main as custom_report_generator_main
 from ResumeProcessor.RecommendedJobsEmailer import main as recomended_jobs_reporter_main
 
-numberOfJobsForRecomendation = 50
+numberOfJobsForRecomendation = 1000
 numberOfJobsForReportGeneration = 5
 
 load_dotenv('.env')
