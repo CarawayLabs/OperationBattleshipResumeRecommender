@@ -6,7 +6,6 @@ fastapi
 uvicorn[standard]
 python-multipart
 requests
-requests
 reportlab
 boto3
 markdown2
