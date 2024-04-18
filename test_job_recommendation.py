@@ -8,9 +8,9 @@ from ResumeProcessor.CustomReportGenerator import main as custom_report_generato
 from ResumeProcessor.RecommendedJobsEmailer import main as email_main
 
 def test_job_recommendation_rest_api(email_address: str, resume_url: str):
-    #url = 'http://127.0.0.1:8000/recommendation' # Local endpoint
+    url = 'http://127.0.0.1:8000/recommendation' # Local endpoint
     # Need to execute this command to start the server: uvicorn main:app --reload
-    url = 'https://operation-battleship-resume-7ek53.ondigitalocean.app/recommendation'  # Prod endpoint
+    #url = 'https://operation-battleship-resume-7ek53.ondigitalocean.app/recommendation'  # Prod endpoint
     
     payload = {
         "email_address": email_address,
@@ -119,20 +119,16 @@ if __name__ == "__main__":
     numberOfJobsToRecomend = 100
     numberOfReportsToGenerate = 5
 
-    test_job_recommendation_rest_api(emailAddress, resume_url)
+    #test_job_recommendation_rest_api(emailAddress, resume_url)
 
     #test_job_recomendation_module(resume_url, numberOfJobsToRecomend)
 
-    #test_report_generation_module(resume_url)
+    test_report_generation_module(resume_url)
 
    # test_recomendation_and_report_modules(resume_url, numberOfJobsToRecomend, numberOfReportsToGenerate)
 
     #test_email_module()
 
     #test_recomendation_reports_and_email_modules(resume_url, numberOfJobsToRecomend, emailAddress)
-
-    for i in range(5):
-        test_job_recommendation_rest_api(emailAddress, resume_url)
-        time.sleep(3)
-
+    
     
