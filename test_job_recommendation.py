@@ -123,9 +123,9 @@ if __name__ == "__main__":
 
     #test_job_recomendation_module(resume_url, numberOfJobsToRecomend)
 
-  #  test_report_generation_module(resume_url)
+    #test_report_generation_module(resume_url)
 
-   # test_recomendation_and_report_modules(resume_url, numberOfJobsToRecomend, numberOfReportsToGenerate)
+    #test_recomendation_and_report_modules(resume_url, numberOfJobsToRecomend, numberOfReportsToGenerate)
 
     #test_email_module()
 
