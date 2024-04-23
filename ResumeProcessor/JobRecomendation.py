@@ -48,6 +48,7 @@ def main(resumeAsString, numberOfJobs):
     namsSpaceForShortJobDescrption = "short-job-description"
 
     resumeAsJson = parseResume(resumeAsString)
+
     resumeAsJson = json.loads(resumeAsJson)
         
     jobTitle = resumeAsJson["Title"]
