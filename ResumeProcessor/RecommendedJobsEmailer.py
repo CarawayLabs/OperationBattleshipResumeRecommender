@@ -102,7 +102,7 @@ def load_email_template(filename):
         return file.read()
 
 
-def createEmailBody(listOfReportUrls, recommendedJobsDf):
+def createEmailBody(listOfReportUrls, recommendedJobsDf, candidateName):
     # Path to your template
     template_path = 'ResumeProcessor/HtmlTemplates/email_template2.html'
     
@@ -114,8 +114,10 @@ def createEmailBody(listOfReportUrls, recommendedJobsDf):
     reportLinks = createHyperLinksForReports(listOfReportUrls)
 
     # Insert dynamic content into the template
+    #Also need to replace the string in the html file <!-- Name goes here --> insert candidateName
     emailBody = htmlTemplate.replace('<!-- List of reportLinks goes here -->', reportLinks)\
-                            .replace('<!-- tableOfRecommendedJobs goes here -->', tableOfRecommendedJobs)
+                            .replace('<!-- tableOfRecommendedJobs goes here -->', tableOfRecommendedJobs)\
+                            .replace('<!-- Name goes here -->', candidateName)
 
     return emailBody
 
@@ -139,8 +141,8 @@ def sendEmail(emailAddress, listOfReportUrls, recommendedJobsDf, emailMessage):
     except Exception as e:
         logging.error(f"An error occurred: {e}.")
 
-def main(emailAddress, recommendedJobsDf, listOfReportUrls):
-    emailMessage = createEmailBody(listOfReportUrls, recommendedJobsDf)
+def main(emailAddress, recommendedJobsDf, listOfReportUrls, candidateName):
+    emailMessage = createEmailBody(listOfReportUrls, recommendedJobsDf, candidateName)
     messageId = sendEmail(emailAddress, listOfReportUrls, recommendedJobsDf, emailMessage)
     logging.info(f"We sent the email. Here is the message id: {messageId}")
     print(f"We sent the email. Here is the message id: {messageId}")

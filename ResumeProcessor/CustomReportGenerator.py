@@ -284,7 +284,7 @@ def upload_to_space(file_name, bucket_name, object_name=None):
 
     # Upload the file
     try:
-        client.upload_file(file_name, bucket_name, object_name)
+        client.upload_file(file_name, bucket_name, object_name, ExtraArgs={'ACL': 'public-read'})
         file_url = f"https://{bucket_name}.nyc3.digitaloceanspaces.com/{object_name}"
         print(f"{file_name} has been uploaded to {bucket_name}/{object_name}.")
         return file_url

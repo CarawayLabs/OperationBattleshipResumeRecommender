@@ -39,20 +39,16 @@ log_level = os.getenv('LOG_LEVEL', 'INFO')
 logging.basicConfig(level=log_level, format='%(asctime)s - %(levelname)s - %(message)s')
 
 
-def main(resumeAsString, numberOfJobs):
+def main(resumeAsDict, numberOfJobs, resumeAsString):
 
     #Variables that are necessary for searching the correct Pinecone Index and Namespaces: 
     indexName = "job-postings" 
     namsSpaceForFullPosting = "full-posting-description"
     namsSpaceForJobTitles = "job-title"
     namsSpaceForShortJobDescrption = "short-job-description"
-
-    resumeAsJson = parseResume(resumeAsString)
-
-    resumeAsJson = json.loads(resumeAsJson)
         
-    jobTitle = resumeAsJson["Title"]
-    resumeSummary = resumeAsJson["CandidateSummary"]
+    jobTitle = resumeAsDict["Title"]
+    resumeSummary = resumeAsDict["CandidateSummary"]
 
     recomendedJobsAndAllMetaData = getJobsAndMetaData(namsSpaceForFullPosting, namsSpaceForJobTitles, namsSpaceForShortJobDescrption, indexName, numberOfJobs, resumeAsString, jobTitle, resumeSummary)
 

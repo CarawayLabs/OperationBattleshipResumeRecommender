@@ -9,11 +9,13 @@ from pdfminer.high_level import extract_text
 from ResumeProcessor.JobRecomendation import main as job_recommendation_main
 
 import os
+import json
 from dotenv import load_dotenv
 import requests
 import pandas as pd
 from pdfminer.high_level import extract_text
 
+from ResumeProcessor.LlmResumeProcessor import LlmResumeProcessor
 from ResumeProcessor.CustomReportGenerator import main as custom_report_generator_main
 from ResumeProcessor.RecommendedJobsEmailer import main as recomended_jobs_reporter_main
 
@@ -46,21 +48,26 @@ async def jobRecommendation(email_address: str, resume_url: str):
         logging.debug(f"Begin Job Recomendation for email: {email_address}.")
         logging.debug(f"Resume url is located at: {resume_url}.")
 
-        pdf_file = await download_pdf(resume_url)
-        resume_as_string = extract_text(pdf_file)
+        pdfFile = await download_pdf(resume_url)
+        resumeAsString = extract_text(pdfFile)
 
-        recommendedJobsDf = job_recommendation_main(resume_as_string, numberOfJobsForRecomendation)
+        llmResumeProcessor = LlmResumeProcessor()
+        resumeAsJson = llmResumeProcessor.parseResume(resumeAsString)
+        resumeAsJson = json.loads(resumeAsJson)
+
+        candidateName = resumeAsJson["Name"]
+
+        recommendedJobsDf = job_recommendation_main(resumeAsJson, numberOfJobsForRecomendation, resumeAsString)
         logging.debug(f"Completed the job recomendation step: {resume_url}.")
 
+        topRecomendedJobs = recommendedJobsDf["job_posting_id"].head(numberOfJobsForReportGeneration).tolist()
 
-        recomendedJobs = recommendedJobsDf["job_posting_id"].head(numberOfJobsForReportGeneration).tolist()
-
-        recomendedJobsAsJobIdList = custom_report_generator_main("Matthew Caraway", resume_as_string, recomendedJobs)
+        recomendedJobsAsJobIdList = custom_report_generator_main(candidateName, resumeAsString, topRecomendedJobs)
 
         #Persist Job Recomendation to DB
 
         #Email Job Recomendation
-        messageID = recomended_jobs_reporter_main(email_address, recommendedJobsDf, recomendedJobsAsJobIdList)
+        messageID = recomended_jobs_reporter_main(email_address, recommendedJobsDf, recomendedJobsAsJobIdList, candidateName)
         logging.debug(f"Finished email send: {messageID}.")
 
 

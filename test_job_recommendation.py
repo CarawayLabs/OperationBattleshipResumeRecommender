@@ -1,8 +1,10 @@
 import requests
 import time
+import json
 import pandas as pd
 from pdfminer.high_level import extract_text
 from io import BytesIO
+from ResumeProcessor.LlmResumeProcessor import LlmResumeProcessor
 from ResumeProcessor.JobRecomendation import main as job_recommendation_main
 from ResumeProcessor.CustomReportGenerator import main as custom_report_generator_main
 from ResumeProcessor.RecommendedJobsEmailer import main as email_main
@@ -22,11 +24,15 @@ def test_job_recommendation_rest_api(email_address: str, resume_url: str):
     print(f"Status Code: {response.status_code}")
     print(f"Response Body: {response.json()}")
 
-def test_job_recomendation_module(resume_url, numberOfJobs):
+def test_job_recomendation_module(resumeUrl, numberOfJobs):
 
-    resume_as_string = getResumeAsString(resume_url)
+    resumeAsString = getResumeAsString(resumeUrl)
 
-    csvOfJobs = job_recommendation_main(resume_as_string, numberOfJobs)
+    llmResumeProcessor = LlmResumeProcessor()
+    resumeAsJson = llmResumeProcessor.parseResume(resumeAsString)
+    resumeAsJson = json.loads(resumeAsJson)
+
+    csvOfJobs = job_recommendation_main(resumeAsJson, numberOfJobs, resumeAsString)
 
     csvOfJobs.to_csv("testInput/recomendedJobs.csv")
 
@@ -119,9 +125,9 @@ if __name__ == "__main__":
     numberOfJobsToRecomend = 100
     numberOfReportsToGenerate = 5
 
-    test_job_recommendation_rest_api(emailAddress, resume_url)
+    #test_job_recommendation_rest_api(emailAddress, resume_url)
 
-    #test_job_recomendation_module(resume_url, numberOfJobsToRecomend)
+    test_job_recomendation_module(resume_url, numberOfJobsToRecomend)
 
     #test_report_generation_module(resume_url)
 
