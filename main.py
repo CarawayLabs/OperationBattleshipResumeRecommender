@@ -77,7 +77,7 @@ async def jobRecommendation(email_address: str, resume_url: str):
         finish_time = time.time()
         total_time_in_seconds = finish_time - start_time
         logging.debug(f"Finished email send. Recomendation Process has completed")
-        logging.INFO("Recomendation has complete. Time required: {total_time_in_seconds}")
+        logging.INFO(f"Recomendation has complete. Time required: {total_time_in_seconds}")
 
 
     except requests.RequestException as e:
