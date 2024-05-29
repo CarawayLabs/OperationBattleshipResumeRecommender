@@ -1,7 +1,7 @@
 pandas
 pdfminer.six
 python-dotenv
-OperationBattleshipCommonUtilities --upgrade
+OperationBattleshipCommonUtilities
 fastapi
 uvicorn[standard]
 python-multipart
