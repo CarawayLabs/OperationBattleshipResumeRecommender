@@ -16,6 +16,8 @@ from googleapiclient.discovery import build
 from email.mime.text import MIMEText
 import base64
 
+from operation_battleship_common_utilities.NomicDao import NomicDao
+
 load_dotenv('.env')
 
 log_level = os.getenv('LOG_LEVEL', 'INFO')
@@ -101,6 +103,13 @@ def load_email_template(filename):
     with open(filename, 'r', encoding='utf-8') as file:
         return file.read()
 
+def getNomicAtlasMapLink():
+
+    nomicDao = NomicDao()
+    url = nomicDao.getLatestMapUrl()
+    mapLink = f'<a href="{url}">AI Job Map</a>'
+    
+    return mapLink
 
 def createEmailBody(listOfReportUrls, recommendedJobsDf, candidateName):
     # Path to your template
@@ -112,12 +121,14 @@ def createEmailBody(listOfReportUrls, recommendedJobsDf, candidateName):
     # Generate dynamic content
     tableOfRecommendedJobs = convertDataFrameToHtmlTable(recommendedJobsDf)
     reportLinks = createHyperLinksForReports(listOfReportUrls)
+    nomicAtlasLink = getNomicAtlasMapLink()
 
     # Insert dynamic content into the template
     #Also need to replace the string in the html file <!-- Name goes here --> insert candidateName
     emailBody = htmlTemplate.replace('<!-- List of reportLinks goes here -->', reportLinks)\
                             .replace('<!-- tableOfRecommendedJobs goes here -->', tableOfRecommendedJobs)\
-                            .replace('<!-- Name goes here -->', candidateName)
+                            .replace('<!-- Name goes here -->', candidateName)\
+                            .replace('<!-- AI Job Map -->', nomicAtlasLink)
 
     return emailBody
 
@@ -143,10 +154,10 @@ def sendEmail(emailAddress, listOfReportUrls, recommendedJobsDf, emailMessage):
 
 def main(emailAddress, recommendedJobsDf, listOfReportUrls, candidateName):
     emailMessage = createEmailBody(listOfReportUrls, recommendedJobsDf, candidateName)
-    messageId = sendEmail(emailAddress, listOfReportUrls, recommendedJobsDf, emailMessage)
-    logging.info(f"We sent the email. Here is the message id: {messageId}")
-    print(f"We sent the email. Here is the message id: {messageId}")
-    return messageId
+    sendEmail(emailAddress, listOfReportUrls, recommendedJobsDf, emailMessage)
+    logging.info(f"Emailer Script has completed.")
+    
+    return
 
 if __name__ == "__main__":
     # Example use of main function

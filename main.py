@@ -10,6 +10,7 @@ from ResumeProcessor.JobRecomendation import main as job_recommendation_main
 
 import os
 import json
+import time
 from dotenv import load_dotenv
 import requests
 import pandas as pd
@@ -45,6 +46,9 @@ async def jobRecommendation(email_address: str, resume_url: str):
 
     try:
 
+        # Begin the timer
+        start_time = time.time()
+
         logging.debug(f"Begin Job Recomendation for email: {email_address}.")
         logging.debug(f"Resume url is located at: {resume_url}.")
 
@@ -64,11 +68,16 @@ async def jobRecommendation(email_address: str, resume_url: str):
 
         recomendedJobsAsJobIdList = custom_report_generator_main(candidateName, resumeAsString, topRecomendedJobs)
 
-        #Persist Job Recomendation to DB
+        #TODO: Persist Job Recomendation to DB
 
         #Email Job Recomendation
-        messageID = recomended_jobs_reporter_main(email_address, recommendedJobsDf, recomendedJobsAsJobIdList, candidateName)
-        logging.debug(f"Finished email send: {messageID}.")
+        recomended_jobs_reporter_main(email_address, recommendedJobsDf, recomendedJobsAsJobIdList, candidateName)
+        
+        # Stop the timer and calculate total time taken.
+        finish_time = time.time()
+        total_time_in_seconds = finish_time - start_time
+        logging.debug(f"Finished email send. Recomendation Process has completed")
+        logging.INFO("Recomendation has complete. Time required: {total_time_in_seconds}")
 
 
     except requests.RequestException as e:

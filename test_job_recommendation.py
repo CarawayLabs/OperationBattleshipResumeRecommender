@@ -91,17 +91,20 @@ def test_recomendation_and_report_modules(resume_url, numberOfJobsToRecomend, nu
 def test_recomendation_reports_and_email_modules(resume_url, numberOfJobsToRecomend, emailAddress):
 
     resume_as_string = getResumeAsString(resume_url)
-    
+
+    llmResumeProcessor = LlmResumeProcessor()
+    resumeAsJson = llmResumeProcessor.parseResume(resume_as_string)
+    resumeAsJson = json.loads(resumeAsJson)
+
     #Step 1 is to get the list of recomendations
-    recommendedJobsDf = job_recommendation_main(resume_as_string, numberOfJobsToRecomend)
+    recommendedJobsDf = job_recommendation_main(resumeAsJson, numberOfJobsToRecomend, resume_as_string)
     
     #Step 2 is to provide reports for the top jobs. 
     recomendedJobsAsJobIdList = recommendedJobsDf["job_posting_id"].head(numberOfReportsToGenerate).tolist()
     listOfReportUrls = custom_report_generator_main("Matthew Caraway", resume_as_string, recomendedJobsAsJobIdList)
 
     #Step 3 is to send the email to the user. 
-    email_main(emailAddress, recommendedJobsDf, listOfReportUrls)
-
+    email_main(emailAddress, recommendedJobsDf, listOfReportUrls, "Matthew Caraway")
     return
 
 def getResumeAsString(resume_url):
@@ -127,7 +130,7 @@ if __name__ == "__main__":
 
     #test_job_recommendation_rest_api(emailAddress, resume_url)
 
-    test_job_recomendation_module(resume_url, numberOfJobsToRecomend)
+    #test_job_recomendation_module(resume_url, numberOfJobsToRecomend)
 
     #test_report_generation_module(resume_url)
 
@@ -135,6 +138,6 @@ if __name__ == "__main__":
 
     #test_email_module()
 
-    #test_recomendation_reports_and_email_modules(resume_url, numberOfJobsToRecomend, emailAddress)
+    test_recomendation_reports_and_email_modules(resume_url, numberOfJobsToRecomend, emailAddress)
     
     
