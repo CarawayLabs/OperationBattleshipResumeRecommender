@@ -130,7 +130,7 @@ if __name__ == "__main__":
 
     #test_job_recommendation_rest_api(emailAddress, resume_url)
 
-    #test_job_recomendation_module(resume_url, numberOfJobsToRecomend)
+    test_job_recomendation_module(resume_url, numberOfJobsToRecomend)
 
     #test_report_generation_module(resume_url)
 
@@ -138,6 +138,6 @@ if __name__ == "__main__":
 
     #test_email_module()
 
-    test_recomendation_reports_and_email_modules(resume_url, numberOfJobsToRecomend, emailAddress)
+    #test_recomendation_reports_and_email_modules(resume_url, numberOfJobsToRecomend, emailAddress)
     
     

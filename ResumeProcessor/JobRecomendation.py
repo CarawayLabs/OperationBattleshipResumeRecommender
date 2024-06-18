@@ -151,7 +151,7 @@ def  getTopNearestNeighborsInNamespace(embeddedResume, numberOfNeighbors, indexN
     #Create an instance of PineConeDatabaseCaller and then search for top N KNN of the input vector
     pineconeApiKey = os.getenv("PINECONE_API_KEY")
     pineConeDatabaseCaller = PineConeDatabaseCaller(pineconeApiKey)
-    listOfNeightbors = pineConeDatabaseCaller.query(embeddedResume[0], numberOfNeighbors, indexName, nameSpace)
+    listOfNeightbors = pineConeDatabaseCaller.query(embeddedResume[0], numberOfNeighbors, indexName, nameSpace, 7)
 
     return listOfNeightbors
 
