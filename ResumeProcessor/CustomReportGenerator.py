@@ -227,7 +227,10 @@ def createHtmlFile(markdownText, fileName, htmlPageTitle):
     
     # Optional: Wrap the HTML in a <body> tag or apply CSS for better styling
     htmlContent = f"<html><head><title>{htmlPageTitle}</title></head><body>{htmlContent}</body></html>"
-    
+
+    # Ensure the filename is supported
+    fileName = ensure_supported_characters_in_file_name(fileName)
+
     # Save the HTML content to a file
     with open(fileName, 'w', encoding='utf-8') as file:
         file.write(htmlContent)
@@ -267,6 +270,10 @@ def upload_to_space(file_name, bucket_name, object_name=None):
     """
 
     logging.debug(f"Begin attempt to upload file named: {file_name}")
+
+    file_name = ensure_supported_characters_in_file_name(file_name)
+
+
     # If S3 object_name was not specified, use file_name
     if object_name is None:
         object_name = file_name
@@ -297,7 +304,27 @@ def upload_to_space(file_name, bucket_name, object_name=None):
         logging.error("Some other error:", e)
         return None
 
+def ensure_supported_characters_in_file_name(file_name):
+    """
+    We need to ensure that the file_name only includes valid characters for persisting files. 
+
+    If unsupported characters like, / (slash) are found, insert an underscore instead
+
+    Args:
+        file_name   :   A string that represents the name of a file. 
+
+    Return
+        file_name   :   Updated filename string that is a valid filename and can be saved.  
+    """
+    # List of unsupported characters
+    unsupported_characters = ['/', '\\', ':', '*', '?', '"', '<', '>', '|']
+
+    # Replace each unsupported character with an underscore
+    for char in unsupported_characters:
+        file_name = file_name.replace(char, '_')
     
+    return file_name
+
 def removeFilesLocally(urlsForPdfReports):
     for url in urlsForPdfReports:
         # Extracting the filename from the URL

@@ -124,7 +124,8 @@ if __name__ == "__main__":
     
     #Key variables required for the recomendation system. 
     emailAddress = "matthew@carawaylabs.com"
-    resume_url = "https://operationbattleship-resumes.nyc3.cdn.digitaloceanspaces.com/MatthewCarawayResume.pdf"
+    # resume_url = "https://operationbattleship-resumes.nyc3.cdn.digitaloceanspaces.com/MatthewCarawayResume.pdf"
+    resume_url = "https://operationbattleship-resumes.nyc3.cdn.digitaloceanspaces.com/Jessamy%20Carruthers%20Resume.pdf"
     numberOfJobsToRecomend = 100
     numberOfReportsToGenerate = 5
 
@@ -138,6 +139,6 @@ if __name__ == "__main__":
 
     #test_email_module()
 
-    #test_recomendation_reports_and_email_modules(resume_url, numberOfJobsToRecomend, emailAddress)
+    test_recomendation_reports_and_email_modules(resume_url, numberOfJobsToRecomend, emailAddress)
     
     
