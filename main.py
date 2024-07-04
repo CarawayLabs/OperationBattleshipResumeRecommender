@@ -1,12 +1,14 @@
-import newrelic.agent
 import os
+from dotenv import load_dotenv
 
 # Load environment variables from the .env file
-from dotenv import load_dotenv
 load_dotenv('.env')
 
 # Initialize New Relic agent
-newrelic.agent.initialize('newrelic.ini')
+import newrelic.agent
+
+# Instead of using a configuration file, initialize with environment variables
+newrelic.agent.initialize()
 
 import httpx
 import asyncio
