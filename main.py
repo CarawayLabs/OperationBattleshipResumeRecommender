@@ -46,24 +46,31 @@ async def download_pdf(resume_url: str):
 
 async def jobRecommendation(email_address: str, resume_url: str):
     try:
+        
         start_time = time.time()
         logging.debug(f"Begin Job Recomendation for email: {email_address}.")
         logging.debug(f"Resume url is located at: {resume_url}.")
+        
         pdfFile = await download_pdf(resume_url)
         resumeAsString = extract_text(pdfFile)
         llmResumeProcessor = LlmResumeProcessor()
         resumeAsJson = llmResumeProcessor.parseResume(resumeAsString)
         resumeAsJson = json.loads(resumeAsJson)
         candidateName = resumeAsJson["Name"]
+        
         recommendedJobsDf = job_recommendation_main(resumeAsJson, numberOfJobsForRecomendation, resumeAsString)
         logging.debug(f"Completed the job recomendation step: {resume_url}.")
+        
         topRecomendedJobs = recommendedJobsDf["job_posting_id"].head(numberOfJobsForReportGeneration).tolist()
         recomendedJobsAsJobIdList = custom_report_generator_main(candidateName, resumeAsString, topRecomendedJobs)
         recomended_jobs_reporter_main(email_address, recommendedJobsDf, recomendedJobsAsJobIdList, candidateName)
+        
         finish_time = time.time()
         total_time_in_seconds = finish_time - start_time
+        
         logging.debug(f"Finished email send. Recomendation Process has completed")
         logging.info(f"Recomendation has complete. Time required: {total_time_in_seconds}")
+    
     except requests.RequestException as e:
         print(f"Error downloading the PDF: {e}")
     except Exception as e:
